@@ -1,4 +1,4 @@
-#include <pick_ik/fk_moveit.hpp>
+#include <pick_ik/bio_ik_fk.hpp>
 #include <pick_ik/goal.hpp>
 #include <pick_ik/ik_gradient.hpp>
 #include <pick_ik/robot.hpp>
@@ -52,9 +52,13 @@ TEST_CASE("RR model FK") {
 
     auto const jmg = robot_model->getJointModelGroup("group");
     auto const tip_link_indices = pick_ik::get_link_indices(robot_model, {"ee"}).value();
+    std::vector<std::string> tip_link_names;
+    for (auto index : tip_link_indices) {
+        tip_link_names.push_back(robot_model->getLinkModelNames()[index]);
+    }
 
     std::mutex mx;
-    auto const fk_fn = pick_ik::make_fk_fn(robot_model, jmg, mx, tip_link_indices);
+    auto const fk_fn = pick_ik::make_bio_ik_fk_fn(robot_model, jmg, tip_link_names, mx);
 
     SECTION("Zero joint position") {
         std::vector<double> const joint_vals = {0.0, 0.0};
@@ -95,8 +99,12 @@ auto solve_ik_test(moveit::core::RobotModelPtr robot_model,
     // Make forward kinematics function
     auto const jmg = robot_model->getJointModelGroup(group_name);
     auto const tip_link_indices = pick_ik::get_link_indices(robot_model, {goal_frame_name}).value();
+    std::vector<std::string> tip_link_names;
+    for (auto index : tip_link_indices) {
+        tip_link_names.push_back(robot_model->getLinkModelNames()[index]);
+    }
     std::mutex mx;
-    auto const fk_fn = pick_ik::make_fk_fn(robot_model, jmg, mx, tip_link_indices);
+    auto const fk_fn = pick_ik::make_bio_ik_fk_fn(robot_model, jmg, tip_link_names, mx);
 
     // Make solution function
     auto const test_position = (params.position_scale > 0);
@@ -243,8 +251,12 @@ TEST_CASE("Panda model IK") {
 
     auto const jmg = robot_model->getJointModelGroup("panda_arm");
     auto const tip_link_indices = pick_ik::get_link_indices(robot_model, {"panda_hand"}).value();
+    std::vector<std::string> tip_link_names;
+    for (auto index : tip_link_indices) {
+        tip_link_names.push_back(robot_model->getLinkModelNames()[index]);
+    }
     std::mutex mx;
-    auto const fk_fn = pick_ik::make_fk_fn(robot_model, jmg, mx, tip_link_indices);
+    auto const fk_fn = pick_ik::make_bio_ik_fk_fn(robot_model, jmg, tip_link_names, mx);
 
     std::vector<double> const home_joint_angles =
         {0.0, -M_PI_4, 0.0, -3.0 * M_PI_4, 0.0, M_PI_2, M_PI_4};

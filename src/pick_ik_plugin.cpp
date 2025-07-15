@@ -1,4 +1,4 @@
-#include <pick_ik/fk_moveit.hpp>
+#include <pick_ik/bio_ik_fk.hpp>
 #include <pick_ik/goal.hpp>
 #include <pick_ik/ik_gradient.hpp>
 #include <pick_ik/ik_memetic.hpp>
@@ -112,7 +112,11 @@ bool PickIKPlugin::searchPositionIK(std::vector<geometry_msgs::msg::Pose> const&
         make_pose_cost_functions(goal_frames, params.position_scale, params.rotation_scale);
 
     // forward kinematics function
-    auto const fk_fn = make_fk_fn(robot_model_, jmg_, fk_mutex_, tip_link_indices_);
+    std::vector<std::string> tip_link_names;
+    for (auto index : tip_link_indices_) {
+        tip_link_names.push_back(robot_model_->getLinkModelNames()[index]);
+    }
+    auto const fk_fn = make_bio_ik_fk_fn(robot_model_, jmg_, tip_link_names, fk_mutex_);
 
     // Create goals (weighted cost functions)
     auto goals = std::vector<Goal>{};

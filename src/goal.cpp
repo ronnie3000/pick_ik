@@ -1,4 +1,3 @@
-#include <pick_ik/fk_moveit.hpp>
 #include <pick_ik/goal.hpp>
 #include <pick_ik/robot.hpp>
 

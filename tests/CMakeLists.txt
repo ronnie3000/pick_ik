@@ -9,7 +9,7 @@ add_executable(test-pick_ik
     robot_tests.cpp
 )
 target_link_libraries(test-pick_ik
-        PRIVATE
+        PUBLIC
     pick_ik_plugin
     Catch2::Catch2WithMain
     moveit_core::moveit_test_utils

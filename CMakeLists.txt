@@ -23,8 +23,9 @@ generate_parameter_library(
   pick_ik_parameters
   src/pick_ik_parameters.yaml
 )
+
 add_library(pick_ik_plugin SHARED
-  src/fk_moveit.cpp
+  src/bio_ik_fk.cpp
   src/forward_kinematics.cpp
   src/pick_ik_plugin.cpp
   src/goal.cpp
@@ -32,9 +33,14 @@ add_library(pick_ik_plugin SHARED
   src/ik_gradient.cpp
   src/robot.cpp
 )
+
+include(GenerateExportHeader)
+generate_export_header(pick_ik_plugin)
+
 target_compile_features(pick_ik_plugin PUBLIC c_std_99 cxx_std_17)
 target_include_directories(pick_ik_plugin PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
   $<INSTALL_INTERFACE:include/pick_ik>)
 target_link_libraries(pick_ik_plugin
   PUBLIC
